@@ -76,7 +76,8 @@ bool Detection::_CaptureLowerCasePrefix(string &Name) {
 }
 
 bool Detection::_IsUpperCamelCaseString(
-    const string &Name, vector<string> IgnorePrefixs,
+    const string &Name,
+    vector<string> IgnorePrefixs,
     const bool bAllowedEndWithUnderscopeChar) {
     bool bStatus                    = false;
     vector<string> NewIgnorePrefixs = IgnorePrefixs;
@@ -172,8 +173,11 @@ bool Detection::_IsLowerSeperatedString(const string &Name,
 }
 
 bool Detection::_IsHungarianNotationString(
-    const string &TypeStr, const string &NameStr, const bool &bIsPtr,
-    const bool &bIsArray, const vector<string> &IgnorePrefixs,
+    const string &TypeStr,
+    const string &NameStr,
+    const bool &bIsPtr,
+    const bool &bIsArray,
+    const vector<string> &IgnorePrefixs,
     const map<string, string> &TypeNamingMap,
     const map<string, string> &PtrNamingMap,
     const map<string, string> &ArrayNamingMap) {
@@ -423,8 +427,10 @@ bool Detection::CheckFunction(const RULETYPE Rule, const string &Name) {
     return bStatus;
 }
 
-bool Detection::CheckVariable(const RULETYPE Rule, const string &Type,
-                              const string &Name, const bool &bIsPtr,
+bool Detection::CheckVariable(const RULETYPE Rule,
+                              const string &Type,
+                              const string &Name,
+                              const bool &bIsPtr,
                               const bool &bIsArray) {
     if (Name.length() == 0) {
         return false;

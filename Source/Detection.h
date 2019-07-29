@@ -39,7 +39,8 @@ class Detection {
     bool _RemoveHeadingPtrChar(string &Text);
     bool _CaptureLowerCasePrefix(string &Name);
     bool
-    _IsUpperCamelCaseString(const string &Name, vector<string> IgnorePrefixs,
+    _IsUpperCamelCaseString(const string &Name,
+                            vector<string> IgnorePrefixs,
                             const bool bAllowedEndWithUnderscopeChar = false);
 
     bool _IsLowerCamelCaseString(const string &Name,
@@ -47,7 +48,8 @@ class Detection {
     bool _IsLowerSeperatedString(const string &Name,
                                  vector<string> IgnorePrefixs);
     bool _IsHungarianNotationString(const string &TypeStr,
-                                    const string &NameStr, const bool &bIsPtr,
+                                    const string &NameStr,
+                                    const bool &bIsPtr,
                                     const bool &bIsArray,
                                     const vector<string> &IgnorePrefixs,
                                     const map<string, string> &TypeNamingMap,
@@ -65,8 +67,10 @@ class Detection {
 
     bool CheckFile(const RULETYPE Rule, const string &Name);
     bool CheckFunction(const RULETYPE Rule, const string &Name);
-    bool CheckVariable(const RULETYPE Rule, const string &Type,
-                       const string &Name, const bool &bIsPtr,
+    bool CheckVariable(const RULETYPE Rule,
+                       const string &Type,
+                       const string &Name,
+                       const bool &bIsPtr,
                        const bool &bIsArray);
 };
 } // namespace namelint
