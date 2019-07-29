@@ -38,15 +38,12 @@ class Detection {
     bool _RemoveHeadingUnderscore(string &Text);
     bool _RemoveHeadingPtrChar(string &Text);
     bool _CaptureLowerCasePrefix(string &Name);
-    bool
-    _IsUpperCamelCaseString(const string &Name,
-                            vector<string> IgnorePrefixs,
-                            const bool bAllowedEndWithUnderscopeChar = false);
+    bool _IsUpperCamelCaseString(const string &Name,
+                                 vector<string> IgnorePrefixs,
+                                 const bool bAllowedEndWithUnderscopeChar = false);
 
-    bool _IsLowerCamelCaseString(const string &Name,
-                                 vector<string> IgnorePrefixs);
-    bool _IsLowerSeperatedString(const string &Name,
-                                 vector<string> IgnorePrefixs);
+    bool _IsLowerCamelCaseString(const string &Name, vector<string> IgnorePrefixs);
+    bool _IsLowerSeperatedString(const string &Name, vector<string> IgnorePrefixs);
     bool _IsHungarianNotationString(const string &TypeStr,
                                     const string &NameStr,
                                     const bool &bIsPtr,
@@ -58,8 +55,7 @@ class Detection {
 
     size_t _FindHowManyChar(const string &InputStr, char cChar);
     bool _RemoveNamespacesAndElements(string &Text);
-    bool _SkipIgnoreFunctions(const string &Name,
-                              const vector<string> &IgnoreList);
+    bool _SkipIgnoreFunctions(const string &Name, const vector<string> &IgnoreList);
 
   public:
     bool ApplyRuleForFunction(const RuleOfFunction &Rule);
@@ -67,11 +63,8 @@ class Detection {
 
     bool CheckFile(const RULETYPE Rule, const string &Name);
     bool CheckFunction(const RULETYPE Rule, const string &Name);
-    bool CheckVariable(const RULETYPE Rule,
-                       const string &Type,
-                       const string &Name,
-                       const bool &bIsPtr,
-                       const bool &bIsArray);
+    bool CheckVariable(
+        const RULETYPE Rule, const string &Type, const string &Name, const bool &bIsPtr, const bool &bIsArray);
 };
 } // namespace namelint
 

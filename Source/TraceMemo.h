@@ -16,13 +16,7 @@ class CodePos {
     size_t nColumn;
 };
 
-typedef enum _CheckType {
-    CT_None,
-    CT_Function  = 1,
-    CT_Parameter = 2,
-    CT_Variable  = 3,
-    CT_Max
-} CheckType;
+typedef enum _CheckType { CT_None, CT_Function = 1, CT_Parameter = 2, CT_Variable = 3, CT_Max } CheckType;
 
 class ErrorDetail {
   public:

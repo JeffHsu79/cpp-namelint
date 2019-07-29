@@ -44,10 +44,7 @@ class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
     bool _IsMainFile(Decl *pDecl);
     bool _PrintPosition(Decl *pDecl);
     void _KeepFileName(string &Path);
-    bool _GetPosition(Decl *pDecl,
-                      string &FileName,
-                      size_t &nLineNumb,
-                      size_t &nColNumb);
+    bool _GetPosition(Decl *pDecl, string &FileName, size_t &nLineNumb, size_t &nColNumb);
 
     bool _ClassifyTypeName(string &TyeName);
 
@@ -68,22 +65,13 @@ class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
 
     bool _GetFunctionInfo(FunctionDecl *pDecl, string &FuncName);
 
-    bool _GetParmsInfo(ParmVarDecl *pDecl,
-                       string &VarType,
-                       string &VarName,
-                       bool &bIsPtr);
+    bool _GetParmsInfo(ParmVarDecl *pDecl, string &VarType, string &VarName, bool &bIsPtr);
 
-    bool _GetVarInfo(VarDecl *pDecl,
-                     string &VarType,
-                     string &VarName,
-                     bool &bIsPtr,
-                     bool &bIsArray,
-                     bool &bIsBuiltinType);
+    bool
+    _GetVarInfo(VarDecl *pDecl, string &VarType, string &VarName, bool &bIsPtr, bool &bIsArray, bool &bIsBuiltinType);
 
   public:
-    MyASTVisitor(const SourceManager *pSM,
-                 const ASTContext *pAstCxt,
-                 const Config *pConfig);
+    MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, const Config *pConfig);
     // bool VisitStmt(Stmt *pStmt);
     // bool VisitCXXRecordDecl(CXXRecordDecl *D);
     // bool VisitCXXConstructorDecl(CXXConstructorDecl *D);
