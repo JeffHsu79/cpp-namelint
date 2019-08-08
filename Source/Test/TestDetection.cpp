@@ -26,11 +26,11 @@ TEST(Config_Detect_CheckFile, InputParms_Good)
 TEST(Config_Detect_CheckFile, InputParms_Bad)
 {
     Detection Detect;
-    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_DEFAULT          , ""));
-    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_UPPER_CAMEL		, ""));
-    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_LOWER_CAMEL		, ""));
+    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_DEFAULT		, ""));
+    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_UPPER_CAMEL	, ""));
+    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_LOWER_CAMEL	, ""));
     EXPECT_EQ(false, Detect.CheckFile(RULETYPE_LOWER_SNAKE  , ""));
-    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_HUNGARIAN        , "AnyName.cpp"));
+    EXPECT_EQ(false, Detect.CheckFile(RULETYPE_HUNGARIAN	, "AnyName.cpp"));
 }
 
 //-------------------------------------------------------------------------
@@ -47,6 +47,11 @@ TEST(Config_Detect_CheckFile, UpperCamelCase_Good)
     EXPECT_EQ(true, Detect.CheckFile(RuleType, "TestName.H"));
     EXPECT_EQ(true, Detect.CheckFile(RuleType, "TestName.cpp"));
     EXPECT_EQ(true, Detect.CheckFile(RuleType, "TestName.CPP"));
+
+	RuleOfFile Rule;
+	Rule.bAllowedUnderscopeChar = true;
+	Detect.ApplyRuleForFile(Rule);
+	EXPECT_EQ(true, Detect.CheckFile(RuleType, "Sample_03.c"));
 }
 
 TEST(Config_Detect_CheckFile, UpperCamelCase_Bad)

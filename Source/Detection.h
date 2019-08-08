@@ -10,6 +10,13 @@ using namespace std;
 
 namespace namelint {
 
+	struct RuleOfFile {
+		bool bAllowedUnderscopeChar;
+
+		RuleOfFile();
+		void Reset();
+	};
+
 struct RuleOfFunction {
     vector<string> IgnoreNames;
     vector<string> IgnorePrefixs;
@@ -31,6 +38,7 @@ struct RuleOfVariable {
 
 class Detection {
   private:
+	RuleOfFile	   m_RuleOfFile;
     RuleOfFunction m_RuleOfFunction;
     RuleOfVariable m_RuleOfVariable;
 
@@ -58,6 +66,7 @@ class Detection {
     bool _SkipIgnoreFunctions(const string &Name, const vector<string> &IgnoreList);
 
   public:
+	bool ApplyRuleForFile(const RuleOfFile &Rule);
     bool ApplyRuleForFunction(const RuleOfFunction &Rule);
     bool ApplyRuleForVariable(const RuleOfVariable &Rule);
 

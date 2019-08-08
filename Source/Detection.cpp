@@ -12,7 +12,17 @@
 //==---------------------------------------------------------------------------
 namespace namelint {
 
-RuleOfFunction::RuleOfFunction() { this->Reset(); }
+RuleOfFile::RuleOfFile() {
+	this->Reset();
+}
+
+void RuleOfFile::Reset() {
+	this->bAllowedUnderscopeChar = false;
+}
+
+RuleOfFunction::RuleOfFunction() { 
+	this->Reset(); 
+}
 
 void RuleOfFunction::Reset() {
     this->bAllowedUnderscopeChar = false;
@@ -218,7 +228,7 @@ bool Detection::_IsHungarianNotationString(const string &TypeStr,
             const auto IterPrefix = Iter->second;
 
             string IterTypeNoStar = IterType;
-            // String::Replace(IterTypeNoStar, "*", "");
+            String::Replace(IterTypeNoStar, "*", "");
 
             if (IterTypeNoStar == NewTypeStr) {
                 const size_t nPos = NewNameStr.find_first_of(IterPrefix);
@@ -354,6 +364,12 @@ bool Detection::_SkipIgnoreFunctions(const string &Name, const vector<string> &I
 //==---------------------------------------------------------------------------
 namespace namelint {
 
+	
+bool Detection::ApplyRuleForFile(const RuleOfFile &Rule) {
+	this->m_RuleOfFile.bAllowedUnderscopeChar = Rule.bAllowedUnderscopeChar;
+	return true;
+}
+
 bool Detection::ApplyRuleForFunction(const RuleOfFunction &Rule) {
     this->m_RuleOfFunction.bAllowedUnderscopeChar = Rule.bAllowedUnderscopeChar;
     this->m_RuleOfFunction.IgnoreNames            = Rule.IgnoreNames;
@@ -378,7 +394,7 @@ bool Detection::CheckFile(const RULETYPE Rule, const string &Name) {
     switch (Rule) {
     case RULETYPE_DEFAULT:
     case RULETYPE_UPPER_CAMEL:
-        bStatus = this->_IsUpperCamelCaseString(Name, NullIgnorePrefixs);
+        bStatus = this->_IsUpperCamelCaseString(Name, NullIgnorePrefixs, this->m_RuleOfFile.bAllowedUnderscopeChar);
         break;
 
     case RULETYPE_LOWER_CAMEL:
