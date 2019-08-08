@@ -3,7 +3,7 @@ Version                 = 0.2
 FileExtNameList         = ["*.c","*.h","*.cpp"]
 CheckVariableName       = true
 CheckFunctionName       = true
-CheckFileName           = false
+CheckFileName           = true
 AllowedUnderscopeChar   = true
 AllowedArrayAffected    = false
 

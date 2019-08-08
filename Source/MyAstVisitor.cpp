@@ -171,12 +171,9 @@ bool MyASTVisitor::_GetVarInfo(
     return true;
 }
 
-ErrorDetail *MyASTVisitor::_CreateErrorDetail(
-	const string &FileName,
-	const string &Suggestion) {
-	return new ErrorDetail(FileName, Suggestion);
+ErrorDetail *MyASTVisitor::_CreateErrorDetail(const string &FileName, const string &Suggestion) {
+    return new ErrorDetail(FileName, Suggestion);
 }
-
 
 ErrorDetail *MyASTVisitor::_CreateErrorDetail(Decl *pDecl,
                                               const CheckType &CheckType,
@@ -210,16 +207,16 @@ ErrorDetail *MyASTVisitor::_CreateErrorDetail(Decl *pDecl,
 }
 
 MyASTVisitor::MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, const Config *pConfig) {
-    this->m_pSrcMgr = pSM;
-    this->m_pAstCxt = (ASTContext *)pAstCxt;
-    this->m_pConfig = pConfig->GetData();
-	APP_CONTEXT* pAppCxt = (APP_CONTEXT*)GetAppCxt();
+    this->m_pSrcMgr      = pSM;
+    this->m_pAstCxt      = (ASTContext *)pAstCxt;
+    this->m_pConfig      = pConfig->GetData();
+    APP_CONTEXT *pAppCxt = (APP_CONTEXT *)GetAppCxt();
 
     {
         RuleOfFunction Rule;
-        Rule.bAllowedEndWithUnderscopeChar = this->m_pConfig->General.Options.bAllowedEndWithUnderscope;
-        Rule.IgnoreNames                   = this->m_pConfig->General.IgnoredList.FunctionName;
-        Rule.IgnorePrefixs                 = this->m_pConfig->General.IgnoredList.FunctionPrefix;
+        Rule.bAllowedUnderscopeChar = this->m_pConfig->General.Options.bAllowedUnderscopeChar;
+        Rule.IgnoreNames            = this->m_pConfig->General.IgnoredList.FunctionName;
+        Rule.IgnorePrefixs          = this->m_pConfig->General.IgnoredList.FunctionPrefix;
         this->m_Detect.ApplyRuleForFunction(Rule);
     }
 
@@ -231,29 +228,6 @@ MyASTVisitor::MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, 
         Rule.ArrayNamingMap = this->m_pConfig->Hungarian.ArrayList;
         this->m_Detect.ApplyRuleForVariable(Rule);
     }
-
-	const bool bHasBeenChecked = pAppCxt->TraceMemo.Checked.nFile + 
-							     pAppCxt->TraceMemo.Checked.nParameter + 
-								 pAppCxt->TraceMemo.Checked.nFunction + 
-								 pAppCxt->TraceMemo.Checked.nVariable > 0;
-
-	if (bHasBeenChecked)
-	{
-		if (this->m_pConfig->General.Options.bCheckFileName) {
-			if (0 == pAppCxt->TraceMemo.Checked.nFile) {
-				pAppCxt->TraceMemo.Checked.nFile++;
-
-				string FileName = Path::FindFileName(pAppCxt->FileName);
-				if (!this->m_Detect.CheckFile(this->m_pConfig->General.Rules.FileName, FileName)) {
-					pAppCxt->TraceMemo.Error.nFile++;
-
-					pAppCxt->TraceMemo.ErrorDetailList.push_back(
-						this->_CreateErrorDetail(FileName, ""));
-				}
-			}
-		}
-	}
-
 }
 
 bool MyASTVisitor::VisitFunctionDecl(clang::FunctionDecl *pDecl) {

@@ -1,5 +1,6 @@
 ﻿#include <stdint.h>
 
+int *piValue = 0;
 int m_iValue = 0;
 int iValue   = 0;
 

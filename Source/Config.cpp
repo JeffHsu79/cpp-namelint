@@ -80,7 +80,7 @@ bool Config::LoadStream(string ConfigContent) {
         // General.Options.AllowedUnderscopeChar
         const toml::Value *pAllowUnderscopeChar = ParseRsValue.find("General.Options.AllowedUnderscopeChar");
         if (pAllowUnderscopeChar && pAllowUnderscopeChar->is<bool>()) {
-            this->m_pConfig->General.Options.bAllowedEndWithUnderscope = pAllowUnderscopeChar->as<bool>();
+            this->m_pConfig->General.Options.bAllowedUnderscopeChar = pAllowUnderscopeChar->as<bool>();
         }
 
         // General.Options.AllowedArrayAffected

@@ -13,7 +13,7 @@ namespace namelint {
 struct RuleOfFunction {
     vector<string> IgnoreNames;
     vector<string> IgnorePrefixs;
-    bool bAllowedEndWithUnderscopeChar;
+    bool bAllowedUnderscopeChar;
 
     RuleOfFunction();
     void Reset();
@@ -36,11 +36,10 @@ class Detection {
 
   private:
     bool _RemoveHeadingUnderscore(string &Text);
-    bool _RemoveHeadingPtrChar(string &Text);
+    size_t _RemoveHeadingPtrChar(string &Text);
     bool _CaptureLowerCasePrefix(string &Name);
-    bool _IsUpperCamelCaseString(const string &Name,
-                                 vector<string> IgnorePrefixs,
-                                 const bool bAllowedEndWithUnderscopeChar = false);
+    bool
+    _IsUpperCamelCaseString(const string &Name, vector<string> IgnorePrefixs, const bool AllowedUnderscopeChar = false);
 
     bool _IsLowerCamelCaseString(const string &Name, vector<string> IgnorePrefixs);
     bool _IsLowerSeperatedString(const string &Name, vector<string> IgnorePrefixs);

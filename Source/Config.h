@@ -3,9 +3,9 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 using namespace std;
 
@@ -24,7 +24,7 @@ struct GeneralOptions {
     bool bCheckVariableName;
     bool bCheckFunctionName;
     bool bCheckFileName;
-    bool bAllowedEndWithUnderscope;
+    bool bAllowedUnderscopeChar;
     bool bAllowedArrayAffected;
 };
 
