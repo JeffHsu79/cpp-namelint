@@ -150,10 +150,10 @@ bool MyASTVisitor::_GetVarInfo(
         RawSrcText = RawSrcText.substr(0, nPos);
     }
 
-    QualType myQualType   = pDecl->getType();
+    QualType MyQualType   = pDecl->getType();
     VarName               = pDecl->getNameAsString();
-    const bool bArrayType = myQualType->isArrayType();
-    const bool bPtrType   = myQualType->isPointerType();
+    const bool bArrayType = MyQualType->isArrayType();
+    const bool bPtrType   = MyQualType->isPointerType();
 
     if (RawSrcText.length() > 0) {
         this->_ClassifyTypeName(RawSrcText);
@@ -161,8 +161,8 @@ bool MyASTVisitor::_GetVarInfo(
 
     VarType        = RawSrcText;
     bIsArray       = bArrayType;
-    bIsBuiltinType = myQualType->isBuiltinType();
-    bIsPtr         = myQualType->isPointerType();
+    bIsBuiltinType = MyQualType->isBuiltinType();
+    bIsPtr         = MyQualType->isPointerType();
 
     // printf("VarType       = %s\n", VarType.c_str());
     // printf("isBuiltinType = %d\n", myQualType->isBuiltinType());
@@ -170,6 +170,13 @@ bool MyASTVisitor::_GetVarInfo(
 
     return true;
 }
+
+ErrorDetail *MyASTVisitor::_CreateErrorDetail(
+	const string &FileName,
+	const string &Suggestion) {
+	return new ErrorDetail(FileName, Suggestion);
+}
+
 
 ErrorDetail *MyASTVisitor::_CreateErrorDetail(Decl *pDecl,
                                               const CheckType &CheckType,
@@ -206,6 +213,7 @@ MyASTVisitor::MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, 
     this->m_pSrcMgr = pSM;
     this->m_pAstCxt = (ASTContext *)pAstCxt;
     this->m_pConfig = pConfig->GetData();
+	APP_CONTEXT* pAppCxt = (APP_CONTEXT*)GetAppCxt();
 
     {
         RuleOfFunction Rule;
@@ -223,6 +231,29 @@ MyASTVisitor::MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, 
         Rule.ArrayNamingMap = this->m_pConfig->Hungarian.ArrayList;
         this->m_Detect.ApplyRuleForVariable(Rule);
     }
+
+	const bool bHasBeenChecked = pAppCxt->TraceMemo.Checked.nFile + 
+							     pAppCxt->TraceMemo.Checked.nParameter + 
+								 pAppCxt->TraceMemo.Checked.nFunction + 
+								 pAppCxt->TraceMemo.Checked.nVariable > 0;
+
+	if (bHasBeenChecked)
+	{
+		if (this->m_pConfig->General.Options.bCheckFileName) {
+			if (0 == pAppCxt->TraceMemo.Checked.nFile) {
+				pAppCxt->TraceMemo.Checked.nFile++;
+
+				string FileName = Path::FindFileName(pAppCxt->FileName);
+				if (!this->m_Detect.CheckFile(this->m_pConfig->General.Rules.FileName, FileName)) {
+					pAppCxt->TraceMemo.Error.nFile++;
+
+					pAppCxt->TraceMemo.ErrorDetailList.push_back(
+						this->_CreateErrorDetail(FileName, ""));
+				}
+			}
+		}
+	}
+
 }
 
 bool MyASTVisitor::VisitFunctionDecl(clang::FunctionDecl *pDecl) {
@@ -265,6 +296,7 @@ bool MyASTVisitor::VisitFunctionDecl(clang::FunctionDecl *pDecl) {
             bStatus = this->_GetParmsInfo(pParmVarDecl, VarType, VarName, bIsPtr);
             if (bStatus) {
                 bResult = this->m_Detect.CheckVariable(this->m_pConfig->General.Rules.VariableName, VarType, VarName,
+                                                       this->m_pConfig->Hungarian.Others.PreferUpperCamelIfMissed,
                                                        bIsPtr, bIsArray);
 
                 pAppCxt->TraceMemo.Checked.nParameter++;
@@ -311,8 +343,9 @@ bool MyASTVisitor::VisitVarDecl(VarDecl *pDecl) {
 
     bool bStauts = this->_GetVarInfo(pDecl, VarType, VarName, bIsPtr, bIsArray, bIsBuiltinType);
     if (bStauts) {
-        bool bResult = this->m_Detect.CheckVariable(this->m_pConfig->General.Rules.VariableName, VarType, VarName,
-                                                    bIsPtr, bIsArray);
+        bool bResult =
+            this->m_Detect.CheckVariable(this->m_pConfig->General.Rules.VariableName, VarType, VarName,
+                                         this->m_pConfig->Hungarian.Others.PreferUpperCamelIfMissed, bIsPtr, bIsArray);
 
         pAppCxt->TraceMemo.Checked.nVariable++;
         if (!bResult) {
