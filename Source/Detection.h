@@ -29,7 +29,7 @@ struct RuleOfFunction {
 struct RuleOfVariable {
     vector<string> IgnorePrefixs;
     map<string, string> WordListMap;
-    map<string, string> NullStringMap;
+    vector<MappingPair> NullStringMap;
     map<string, string> ArrayNamingMap;
 
     RuleOfVariable();
@@ -58,7 +58,7 @@ class Detection {
                                     const bool &bIsArray,
                                     const vector<string> &IgnorePrefixs,
                                     const map<string, string> &TypeNamingMap,
-                                    const map<string, string> &PtrNamingMap,
+                                    const vector<MappingPair> &NullStringMap,
                                     const map<string, string> &ArrayNamingMap);
 
     size_t _FindHowManyChar(const string &InputStr, char cChar);

@@ -17,9 +17,9 @@ namespace TargetIsFile {
 TEST(Config_Detect_CheckFile, InputParms_Good)
 {
     Detection Detect;
-    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_DEFAULT           , "TestName.cpp"));
-    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_UPPER_CAMEL		, "TestName.cpp"));
-    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_LOWER_CAMEL		, "testName.cpp"));
+    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_DEFAULT		, "TestName.cpp"));
+    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_UPPER_CAMEL	, "TestName.cpp"));
+    EXPECT_EQ(true, Detect.CheckFile(RULETYPE_LOWER_CAMEL	, "testName.cpp"));
     EXPECT_EQ(true, Detect.CheckFile(RULETYPE_LOWER_SNAKE   , "test_name.cpp"));
 }
 
@@ -278,8 +278,10 @@ TEST(Config_Detect_CheckVariable, InputParms_Good)
 	Rule.WordListMap.insert(std::pair<string, string>("uin8_t" , "u8"));
 	Rule.WordListMap.insert(std::pair<string, string>("uin16_t", "u16"));
 
-	Rule.NullStringMap.insert(std::pair<string, string>("char*"   , "sz"));
-	Rule.NullStringMap.insert(std::pair<string, string>("char**"  , "psz"));
+	Rule.NullStringMap.push_back(MappingPair("char*"	 , "sz"));
+	Rule.NullStringMap.push_back(MappingPair("char**"	 , "psz"));
+	Rule.NullStringMap.push_back(MappingPair("wchar_t*"  , "wsz"));
+	Rule.NullStringMap.push_back(MappingPair("wchar_t**" , "pwsz"));
 
 	bool bPrefer = true;
 	bool bIsPtr   = false;

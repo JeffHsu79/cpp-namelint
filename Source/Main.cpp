@@ -142,6 +142,10 @@ int main(int iArgc, char **pszArgv) {
         Detection dect;
         shared_ptr<ConfigData> pConfig = Config.GetData();
         if (pConfig->General.Options.bCheckFileName) {
+            RuleOfFile Rule;
+            Rule.bAllowedUnderscopeChar = pConfig->General.Options.bAllowedUnderscopeChar;
+            dect.ApplyRuleForFile(Rule);
+
             pAppCxt->TraceMemo.Checked.nFile++;
             if (!dect.CheckFile(pConfig->General.Rules.FileName, FileName)) {
                 pAppCxt->TraceMemo.Error.nFile++;

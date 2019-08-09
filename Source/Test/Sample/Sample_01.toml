@@ -38,7 +38,7 @@ FunctionName            = ["main",
 [Hungarian.Others]
 PreferUpperCamelIfMissed = true
 
-[Hungarian.PointerList]
+[Hungarian.NullStringList]
 "char*"                  = "sz"
 "wchar_t*"               = "wsz"
 "char**"                 = "psz"

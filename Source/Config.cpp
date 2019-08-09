@@ -171,16 +171,16 @@ bool Config::LoadStream(string ConfigContent) {
         }
 
         // ==----------------------------------------------------------------------------------
-        // [Hungarian.PointerList]
+        // [Hungarian.NullStringList]
         // ==----------------------------------------------------------------------------------
         const toml::Value *pHungarianNullStringList = ParseRsValue.find("Hungarian.NullStringList");
         if (pHungarianNullStringList && pHungarianNullStringList->is<toml::Table>()) {
             this->m_pConfig->Hungarian.NullStringList.clear();
-            [](map<string, string> &OutStrMap, toml::Table InputTable) {
+            [](vector<MappingPair> &OutStrMap, toml::Table InputTable) {
                 for (toml::Table::iterator Iter = InputTable.begin(); Iter != InputTable.end(); Iter++) {
                     auto Str1 = Iter->first;
                     auto Str2 = Iter->second.as<string>();
-                    OutStrMap.insert(std::pair<string, string>(Str1, Str2));
+                    OutStrMap.push_back(MappingPair(Str1, Str2));
                 }
             }(this->m_pConfig->Hungarian.NullStringList, pHungarianNullStringList->as<toml::Table>());
         }

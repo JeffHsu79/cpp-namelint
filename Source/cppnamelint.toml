@@ -41,6 +41,7 @@ PreferUpperCamelIfMissed = true
 "char**"                 = "psz"
 "wchar_t**"              = "pwsz"
 
+
 [Hungarian.WordList]
 # C Primitive Type
 "void"                   = ""
