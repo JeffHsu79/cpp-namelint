@@ -223,8 +223,8 @@ MyASTVisitor::MyASTVisitor(const SourceManager *pSM, const ASTContext *pAstCxt, 
     {
         RuleOfVariable Rule;
         Rule.IgnorePrefixs  = this->m_pConfig->General.IgnoredList.VariablePrefix;
-        Rule.TypeNamingMap  = this->m_pConfig->Hungarian.WordList;
-        Rule.PtrNamingMap   = this->m_pConfig->Hungarian.PointerList;
+        Rule.WordListMap    = this->m_pConfig->Hungarian.WordList;
+        Rule.NullStringMap  = this->m_pConfig->Hungarian.NullStringList;
         Rule.ArrayNamingMap = this->m_pConfig->Hungarian.ArrayList;
         this->m_Detect.ApplyRuleForVariable(Rule);
     }

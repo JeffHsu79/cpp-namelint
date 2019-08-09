@@ -12,17 +12,11 @@
 //==---------------------------------------------------------------------------
 namespace namelint {
 
-RuleOfFile::RuleOfFile() {
-	this->Reset();
-}
+RuleOfFile::RuleOfFile() { this->Reset(); }
 
-void RuleOfFile::Reset() {
-	this->bAllowedUnderscopeChar = false;
-}
+void RuleOfFile::Reset() { this->bAllowedUnderscopeChar = false; }
 
-RuleOfFunction::RuleOfFunction() { 
-	this->Reset(); 
-}
+RuleOfFunction::RuleOfFunction() { this->Reset(); }
 
 void RuleOfFunction::Reset() {
     this->bAllowedUnderscopeChar = false;
@@ -33,8 +27,8 @@ void RuleOfFunction::Reset() {
 RuleOfVariable::RuleOfVariable() { this->Reset(); }
 void RuleOfVariable::Reset() {
     this->IgnorePrefixs.clear();
-    this->TypeNamingMap.clear();
-    this->PtrNamingMap.clear();
+    this->WordListMap.clear();
+    this->NullStringMap.clear();
     this->ArrayNamingMap.clear();
 }
 
@@ -196,14 +190,10 @@ bool Detection::_IsHungarianNotationString(const string &TypeStr,
                                            const bool &bIsArray,
                                            const vector<string> &IgnorePrefixs,
                                            const map<string, string> &TypeNamingMap,
-                                           const map<string, string> &PtrNamingMap,
+                                           const map<string, string> &NullStringMap,
                                            const map<string, string> &ArrayNamingMap) {
-
-    bool bModified = false;
-
     string NewNameStr = NameStr;
     string NewTypeStr = TypeStr;
-
     this->_RemoveNamespacesAndElements(NewTypeStr);
 
     //
@@ -213,106 +203,71 @@ bool Detection::_IsHungarianNotationString(const string &TypeStr,
         const size_t nPos = NewNameStr.find(*Iter);
         if (0 == nPos) {
             const size_t nStrLen = Iter->length();
-            NewNameStr           = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
-            bModified            = true;
+
+            NewNameStr = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
             break;
         }
     }
 
     //
-    // PtrNamingMap
+    // Pointer & NullStringMap
     //
     if (bIsPtr) {
-        for (map<string, string>::const_iterator Iter = PtrNamingMap.begin(); Iter != PtrNamingMap.end(); Iter++) {
-            const auto IterType   = Iter->first;
-            const auto IterPrefix = Iter->second;
-
-            string IterTypeNoStar = IterType;
-            String::Replace(IterTypeNoStar, "*", "");
-
-            if (IterTypeNoStar == NewTypeStr) {
-                const size_t nPos = NewNameStr.find_first_of(IterPrefix);
-                if (0 == nPos) {
-                    const size_t nStrLen = IterPrefix.length();
-
-                    NewNameStr = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
-                    bModified  = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    //
-    // Pointer
-    //
-    bool bStatus = true;
-    if (bIsPtr) {
-        bModified           = true;
         size_t nLowerPCount = this->_RemoveHeadingPtrChar(NewNameStr);
-        bStatus             = (nLowerPCount > 0);
-    }
-
-    //
-    // TypeNamingMap
-    //
-    bool bMatchedList = false;
-    if (bStatus) {
-        for (map<string, string>::const_iterator Iter = TypeNamingMap.begin(); Iter != TypeNamingMap.end(); Iter++) {
+        for (map<string, string>::const_iterator Iter = NullStringMap.begin(); Iter != NullStringMap.end(); Iter++) {
             const auto IterType   = Iter->first;
             const auto IterPrefix = Iter->second;
-
-            if (IterType == NewTypeStr) {
-                bMatchedList      = true;
-                const size_t nPos = NewNameStr.find_first_of(IterPrefix);
-                if (0 == nPos) {
-                    const size_t nStrLen = IterPrefix.length();
-
-                    NewNameStr = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
-                    bModified  = true;
-                    break;
-                } else if (IterPrefix == "") {
-                    // Bypass
-                    bModified = true;
-                    break;
+            string IterTypeNoStar = IterType;
+            if (IterTypeNoStar == NewTypeStr) {
+                const size_t nNewStrPos = NewNameStr.find(IterPrefix);
+                if (0 == nNewStrPos) {
+                    const size_t nPrefixLen = IterPrefix.length();
+                    NewNameStr              = NewNameStr.substr(nPrefixLen, NewNameStr.length() - nPrefixLen);
                 }
             }
         }
     }
 
-    if (bStatus && bIsArray) {
-        for (map<string, string>::const_iterator Iter = ArrayNamingMap.begin(); Iter != ArrayNamingMap.end(); Iter++) {
-            const auto IterType   = Iter->first;
-            const auto IterPrefix = Iter->second;
-            if (IterType == NewTypeStr) {
-                const size_t nPos = NewNameStr.find_first_of(IterPrefix);
-                if (0 == nPos) {
-                    const size_t nStrLen = IterPrefix.length();
-
-                    NewNameStr = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
-                    bModified  = true;
-                    break;
-                }
+    for (map<string, string>::const_iterator Iter = TypeNamingMap.begin(); Iter != TypeNamingMap.end(); Iter++) {
+        const auto IterType   = Iter->first;
+        const auto IterPrefix = Iter->second;
+        if (IterType == NewTypeStr) {
+            const size_t nNewStrPos = NewNameStr.find(IterPrefix);
+            if (0 == nNewStrPos) {
+                const size_t nPrefixLen = IterPrefix.length();
+                NewNameStr              = NewNameStr.substr(nPrefixLen, NewNameStr.length() - nPrefixLen);
+                break;
             }
         }
     }
 
-    if (bStatus && bModified) {
-        this->_RemoveHeadingUnderscore(NewNameStr);
+    // if (bIsArray) {
+    //	for (map<string, string>::const_iterator Iter = ArrayNamingMap.begin(); Iter != ArrayNamingMap.end(); Iter++) {
+    //		const auto IterType = Iter->first;
+    //		const auto IterPrefix = Iter->second;
+    //		if (IterType == NewTypeStr) {
+    //			const size_t nPos = NewNameStr.find_first_of(IterPrefix);
+    //			if (0 == nPos) {
+    //				const size_t nStrLen = IterPrefix.length();
+
+    //				NewNameStr = NewNameStr.substr(nStrLen, NewNameStr.length() - nStrLen);
+    //				bModified = true;
+    //				break;
+    //			}
+    //		}
+    //	}
+    //}
+
+    bool bStatus = false;
+    if (bPreferUpperCamel) {
+        bStatus = this->_IsUpperCamelCaseString(NewNameStr, IgnorePrefixs);
+    } else {
+        bStatus = this->_IsLowerCamelCaseString(NewNameStr, IgnorePrefixs);
     }
 
-    bool bIsPreferCamel = false;
-    if (bStatus) {
-        if (bPreferUpperCamel || bModified) {
-            bIsPreferCamel = this->_IsUpperCamelCaseString(NewNameStr, IgnorePrefixs);
-        } else {
-            bIsPreferCamel = this->_IsLowerCamelCaseString(NewNameStr, IgnorePrefixs);
-        }
-    }
-
-    bStatus = (bMatchedList && bModified && bIsPreferCamel) ||  // Hungarian notation
-              (!bMatchedList && bModified && bIsPreferCamel) || // Pointer of object
-              (!bMatchedList && !bModified && bIsPreferCamel);  // Object
+    // bStatus = (bMatchedList && bModified && bIsPreferCamel) ||  // Hungarian notation
+    //          (!bMatchedList && bModified && bIsPreferCamel) || // Pointer of object
+    //          (!bMatchedList && !bModified && bIsPreferCamel);  // Object
     return bStatus;
 }
 
@@ -364,10 +319,9 @@ bool Detection::_SkipIgnoreFunctions(const string &Name, const vector<string> &I
 //==---------------------------------------------------------------------------
 namespace namelint {
 
-	
 bool Detection::ApplyRuleForFile(const RuleOfFile &Rule) {
-	this->m_RuleOfFile.bAllowedUnderscopeChar = Rule.bAllowedUnderscopeChar;
-	return true;
+    this->m_RuleOfFile.bAllowedUnderscopeChar = Rule.bAllowedUnderscopeChar;
+    return true;
 }
 
 bool Detection::ApplyRuleForFunction(const RuleOfFunction &Rule) {
@@ -378,9 +332,17 @@ bool Detection::ApplyRuleForFunction(const RuleOfFunction &Rule) {
 }
 bool Detection::ApplyRuleForVariable(const RuleOfVariable &Rule) {
     this->m_RuleOfVariable.IgnorePrefixs  = Rule.IgnorePrefixs;
-    this->m_RuleOfVariable.TypeNamingMap  = Rule.TypeNamingMap;
-    this->m_RuleOfVariable.PtrNamingMap   = Rule.PtrNamingMap;
+    this->m_RuleOfVariable.WordListMap    = Rule.WordListMap;
     this->m_RuleOfVariable.ArrayNamingMap = Rule.ArrayNamingMap;
+
+    this->m_RuleOfVariable.NullStringMap.clear();
+    for (map<string, string>::const_iterator Iter = Rule.NullStringMap.begin(); Iter != Rule.NullStringMap.end();
+         Iter++) {
+        auto IterType   = Iter->first;
+        auto IterPrefix = Iter->second;
+        String::Replace(IterType, "*", "");
+        this->m_RuleOfVariable.NullStringMap.insert(std::pair<string, string>(IterType, IterPrefix));
+    }
     return true;
 }
 
@@ -472,7 +434,7 @@ bool Detection::CheckVariable(const RULETYPE Rule,
     case RULETYPE_HUNGARIAN:
         bStatus = this->_IsHungarianNotationString(
             Type, Name, bPreferUpperCamel, bIsPtr, bIsArray, this->m_RuleOfVariable.IgnorePrefixs,
-            this->m_RuleOfVariable.TypeNamingMap, this->m_RuleOfVariable.PtrNamingMap,
+            this->m_RuleOfVariable.WordListMap, this->m_RuleOfVariable.NullStringMap,
             this->m_RuleOfVariable.ArrayNamingMap);
         break;
     }

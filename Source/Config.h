@@ -54,7 +54,7 @@ typedef std::map<std::string, std::string> HungarianMap;
 
 struct Hungarian {
     HungarianOthers Others;
-    HungarianMap PointerList;
+    HungarianMap NullStringList;
     HungarianMap ArrayList;
     HungarianMap WordList;
 };

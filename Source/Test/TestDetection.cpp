@@ -274,14 +274,23 @@ TEST(Config_Detect_CheckVariable, InputParms_Good)
 {
 	RuleOfVariable Rule;
     Detection Detect;
-	Rule.TypeNamingMap.insert(std::pair<string, string>("int"    , "i"));
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin8_t" , "u8"));
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin16_t", "u16"));
+	Rule.WordListMap.insert(std::pair<string, string>("int"    , "i"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin8_t" , "u8"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin16_t", "u16"));
+
+	Rule.NullStringMap.insert(std::pair<string, string>("char*"   , "sz"));
+	Rule.NullStringMap.insert(std::pair<string, string>("char**"  , "psz"));
 
 	bool bPrefer = true;
 	bool bIsPtr   = false;
 	bool bIsArray = false;
 	Detect.ApplyRuleForVariable(Rule);
+	
+	EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_HUNGARIAN		, "char"	, "szStr"     , bPrefer, true  , bIsArray));
+	EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_HUNGARIAN		, "char"	, "pszStr"    , bPrefer, true  , bIsArray));
+	EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_HUNGARIAN		, "wchar_t" , "wszStr"    , bPrefer, true  , bIsArray));
+	EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_HUNGARIAN		, "wchar_t"	, "pwszStr"   , bPrefer, true  , bIsArray));
+
 	EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_HUNGARIAN		, "int"		, "piMyValue" , bPrefer, true  , bIsArray));
     EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_DEFAULT		, "uin8_t"  , "MyFunc"    , bPrefer, bIsPtr, bIsArray));
     EXPECT_EQ(true, Detect.CheckVariable(RULETYPE_UPPER_CAMEL	, "uin8_t"  , "MyFunc"    , bPrefer, bIsPtr, bIsArray));
@@ -301,8 +310,8 @@ TEST(Config_Detect_CheckVariable, InputParms_Bad)
 	RuleOfVariable Rule;
 	Detection Detect;
 
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin8_t", "u8"));
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin16_t", "u16"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin8_t", "u8"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin16_t", "u16"));
 
 	bool bPrefer = true;
 	bool bIsPtr  = false;
@@ -333,7 +342,7 @@ TEST(Config_Detect_CheckVariable, GoodCases)
 	RuleOfVariable Rule;
 	Detection Detect;
 
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin8_t", "u8"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin8_t", "u8"));
 
 	bool bPrefer = true;
 	bool bIsPtr = false;
@@ -350,7 +359,7 @@ TEST(Config_Detect_CheckVariable, Hungarian_Bad)
 	RuleOfVariable Rule;
 	Detection Detect;
 
-	Rule.TypeNamingMap.insert(std::pair<string, string>("uin8_t", "u8"));
+	Rule.WordListMap.insert(std::pair<string, string>("uin8_t", "u8"));
 
 	bool bPrefer = true;
 	bool bIsPtr = false;
